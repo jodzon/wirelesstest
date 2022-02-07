@@ -1,27 +1,35 @@
 # wirelesstest
-
-
-## gathers data from test site
+gathers data from given url
 
 ## Install:
-``` cd wirelesstest && composer install```
+``` composer install```
 
-## Start:
+# Use if no local php
+### Start: 
 ``` docker-compose up ```
-
-## Stop:
+### Stop:
 ``` docker-compose down ```
-
-## Scrap:
+### Scrap:
 ```
 docker exec -it app bash
 cd /var/www/html 
 php application scrap --u https://videx.comesconnected.com/
 ```
-
-## Test:
+### Test:
 ```
 docker exec -it app bash
 cd /var/www/html 
+php application test
+```
+
+# Use local php is present
+
+### Scrap:
+```
+php application scrap --u https://videx.comesconnected.com/
+```
+
+### Test:
+```
 php application test
 ```
