@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  app:
+    container_name: app
+    restart: unless-stopped
+    image: php:7.4-apache
+    volumes:
+      - ./wirelesstest:/var/www/html
+    tty: true
+    ports:
+      - 80:80
+    networks:
+      static-network:
+        ipv4_address: 192.0.12.120
+
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 192.0.12.0/24
