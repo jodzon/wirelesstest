@@ -111,6 +111,7 @@ class ScrapCommand extends Command
         if ($crawler instanceof Crawler) {
             $this->prepareScrapData($crawler);
             if (count($this->elements) > 0) {
+                ksort($this->elements);
                 $this->setResults($this->elements);
                 $this->info($this->getJsonResults());
                 return;
