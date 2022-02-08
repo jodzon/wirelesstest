@@ -4,7 +4,6 @@ uses ``` laravel-zero/framework ``` version ^8.8 and ``` weidner/goutte ``` vers
 ## Install:
 ``` composer install```
 
-# Use if no local php
 ### Start: 
 ``` docker-compose up ```
 ### Stop:
@@ -19,17 +18,5 @@ php application scrap --u https://videx.comesconnected.com/
 ```
 docker exec -it app bash
 cd /var/www/html 
-php application test
-```
-
-# Use if local php is present
-
-### Scrap:
-```
-php application scrap --u https://videx.comesconnected.com/
-```
-
-### Test:
-```
 php application test
 ```
