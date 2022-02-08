@@ -44,7 +44,6 @@ class ScrapCommand extends Command
      */
     public function handle()
     {
-        $crawler = null;
         $plugin = null;
 
         // get url from input
