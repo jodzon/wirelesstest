@@ -23,10 +23,19 @@ class ComesConnectedScrapper implements ScrapperInterface
     }
 
     /**
+     * @param array $result
+     * @return void
+     */
+    public function pushResult(array $result): void
+    {
+        $this->results[] = $result;
+    }
+
+    /**
      * Returns json encoded $results
      * @return string
      */
-    private function getJsonResults(): string
+    public function getJsonResults(): string
     {
         return json_encode($this->results);
     }
@@ -46,19 +55,44 @@ class ComesConnectedScrapper implements ScrapperInterface
      * @param string $text
      * @return string
      */
-    private function cleanCurrencies(string $symbol, string $text): string
+    private function cleanString(string $symbol, string $text): string
     {
         return str_replace($symbol, '', $text);
     }
 
     /**
      *
-     * @param Crawler $htmlData
+     * @param Crawler $crawler
      * @return void
      */
-    public function processHtmlData(Crawler $htmlData)
+    public function processHtmlData(Crawler $crawler): void
     {
-
+        // get packages from content
+        $crawler->filter('.package')->each(function ($node) {
+            // get basic values
+            $optionTitle = $node->filter('.header.dark-bg > h3')->text();
+            $optionDescription = $node->filter('.package-name')->text();
+            $packagePriceBlock = $node->filter('.package-price');
+            $optionPrice = $packagePriceBlock->filter('.price-big')->text();
+            $optionPrice = $this->cleanString('£', $optionPrice);
+            // search for discount text, no discount applied if nothing found
+            $discount = $node->filter('.package-price')->each(function (Crawler $packagePrice) {
+                $discountText = $packagePrice->filter('p');
+                if ($discountText->count()) {
+                    return $discountText->text();
+                }
+                return 'No discount';
+            });
+            // push element array to $this->elements
+            $result = [
+                'option_title' => $optionTitle,
+                'option_description' => $optionDescription,
+                'option_price' => $optionPrice,
+                'option_currency' => 'GBP',
+                'option_discount' => $discount,
+            ];
+            $this->pushResult($result);
+        });
     }
 
 }

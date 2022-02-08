@@ -22,7 +22,7 @@ cd /var/www/html
 php application test
 ```
 
-# Use local php is present
+# Use if local php is present
 
 ### Scrap:
 ```
