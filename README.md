@@ -1,6 +1,6 @@
 # wirelesstest
 gathers data from given url
-
+uses ``` laravel-zero/framework ``` version ^8.8 and ``` weidner/goutte ``` version ^2.1
 ## Install:
 ``` composer install```
 
