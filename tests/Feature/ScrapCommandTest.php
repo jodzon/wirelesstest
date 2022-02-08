@@ -28,7 +28,6 @@ test('ScrapCommand class sortResults test', function () {
     expect($this->scrapMock->sortResults($inputArray))->toBe($expectArray);
 });
 
-
 test('crawler class check', function ($url) {
     $this->client = Mockery::mock(Goutte::class);
     $this->client->shouldReceive('request')->with($url)->andReturn(Symfony\Component\DomCrawler\Crawler::class);
@@ -37,7 +36,6 @@ test('crawler class check', function ($url) {
     [$notProperURL],
     [$badURL],
 );
-
 
 test('scrap command called from command line with various urls', function () use ($properJsonResult) {
     $this->artisan('scrap')
