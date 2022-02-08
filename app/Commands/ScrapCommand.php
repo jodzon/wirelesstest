@@ -88,6 +88,10 @@ class ScrapCommand extends Command
         if ($url === env('VIDEX_SCRAP_URL')) {
             $plugin = new ComesConnectedScrapper();
         }
+        if (is_null($plugin)) {
+            $this->error('No scrapper plugin for given url');
+            return;
+        }
         // try to get and process data
         try {
             $crawler = $client->request('GET', $url);
