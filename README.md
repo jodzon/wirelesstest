@@ -1,6 +1,18 @@
 # wirelesstest
 gathers data from given url
 uses ``` laravel-zero/framework ``` version ^8.8 and ``` weidner/goutte ``` version ^2.1
+
+Console command code: 
+``` 
+/app/Commands/ScrapCommand.php 
+```
+Scrapper modules code: 
+``` 
+/app/Providers/Scrapers/Interfaces/ScrapperInterface.php 
+/app/Providers/Scrapers/ComesConnectedScrapper.php
+```
+
+
 ## Install:
 ``` composer install```
 
