@@ -61,7 +61,7 @@ class ComesConnectedScrapper implements ScrapperInterface
     }
 
     /**
-     *
+     * Process html data from crawler instance
      * @param Crawler $crawler
      * @return void
      */

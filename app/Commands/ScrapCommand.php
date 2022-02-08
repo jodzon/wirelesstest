@@ -26,6 +26,7 @@ class ScrapCommand extends Command
     protected $description = 'Scraps target webpage, based on url in SCRAP_URL from .env';
 
     /**
+     * Check if given url is handled by app
      * @param string $url
      * @return bool
      */
@@ -40,9 +41,9 @@ class ScrapCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $plugin = null;
 
