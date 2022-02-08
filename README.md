@@ -12,6 +12,12 @@ Scrapper modules code:
 /app/Providers/Scrapers/ComesConnectedScrapper.php
 ```
 
+Tests: 
+``` 
+/tests/Unit/ComesConnectedScrapperTest.php 
+/tests/Feature/ScrapCommandTest.php
+```
+
 
 ## Install:
 ``` composer install```
