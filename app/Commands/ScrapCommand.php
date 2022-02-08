@@ -30,12 +30,20 @@ class ScrapCommand extends Command
      * @param string $url
      * @return bool
      */
-    private function validateUrl( string $url): ?bool
+    private function validateUrl(string $url): ?bool
     {
         if ($url !== env('VIDEX_SCRAP_URL')) {
             return null;
         }
         return true;
+    }
+
+    private function sortResults(array $array)
+    {
+        usort($array, function ($a, $b) {
+            return $b['option_price'] <=> $a['option_price'];
+        });
+        return $array;
     }
 
     /**
@@ -78,24 +86,25 @@ class ScrapCommand extends Command
         // try to get and process data
         try {
             $crawler = $client->request('GET', $url);
-            if ($crawler instanceof Crawler) {
-                $plugin->processHtmlData($crawler);
-                if (count($plugin->getResults()) > 0) {
-                    // return scrapped json values
-                    $this->info($plugin->getJsonResults());
-                    return;
-                }
-                // return no results info
-                $this->info('No data gathered');
+            if (!($crawler instanceof Crawler)) {
+                $this->error('Crawler error occured ');
                 return;
             }
+            $plugin->processHtmlData($crawler);
+            if (count($plugin->getResults()) > 0) {
+                // return scrapped json values
+                $results = $this->sortResults($plugin->getResults());
+                $plugin->setResults($results);
+                $this->info($plugin->getJsonResults());
+                return;
+            }
+            // return no results info
+            $this->info('No data gathered');
+            return;
         } catch (Exception $e) {
             // display error
             $this->error('Error occured: ' . $e->getMessage());
             return;
         }
-        // general error
-        $this->error('General error');
-        die();
     }
 }
