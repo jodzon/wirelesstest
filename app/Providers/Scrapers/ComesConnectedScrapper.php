@@ -55,7 +55,7 @@ class ComesConnectedScrapper implements ScrapperInterface
      * @param string $text
      * @return string
      */
-    private function cleanString(string $symbol, string $text): string
+    public function cleanString(string $symbol, string $text): string
     {
         return str_replace($symbol, '', $text);
     }
