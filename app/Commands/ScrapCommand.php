@@ -30,7 +30,7 @@ class ScrapCommand extends Command
      * @param string $url
      * @return bool
      */
-    private function validateUrl(string $url): ?bool
+    public function validateUrl(string $url): ?bool
     {
         if ($url !== env('VIDEX_SCRAP_URL')) {
             return null;
@@ -38,7 +38,12 @@ class ScrapCommand extends Command
         return true;
     }
 
-    private function sortResults(array $array)
+    /**
+     * Sorts results DESC
+     * @param array $array
+     * @return array
+     */
+    public function sortResults(array $array): array
     {
         usort($array, function ($a, $b) {
             return $b['option_price'] <=> $a['option_price'];
