@@ -2,13 +2,11 @@
 
 namespace App\Commands;
 
-use Illuminate\Console\Scheduling\Schedule;
-use LaravelZero\Framework\Commands\Command;
-use Goutte\Client as Goutte;
-use Symfony\Component\DomCrawler\Crawler;
+use App\Providers\Scrapers\ComesConnectedScrapper;
 use Exception;
-
-use function PHPUnit\Framework\isInstanceOf;
+use Goutte\Client as Goutte;
+use LaravelZero\Framework\Commands\Command;
+use Symfony\Component\DomCrawler\Crawler;
 
 class ScrapCommand extends Command
 {
@@ -17,13 +15,13 @@ class ScrapCommand extends Command
      * Scrapping results array
      * @var array
      */
-    private $results = array();
+    private array $results = array();
 
     /**
-     * Scrapping results array
+     * Scrapping results elements
      * @var array
      */
-    private $elements = array();
+    private array $elements = array();
 
     /**
      * Scrapping results array
@@ -89,20 +87,55 @@ class ScrapCommand extends Command
     }
 
     /**
+     * @param string $url
+     * @return bool
+     */
+    private function validateUrl( string $url): ?bool
+    {
+        if ($url !== env('SCRAP_URL')) {
+            return null;
+        }
+        return true;
+    }
+
+    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle()
     {
-        // new Goutte Client
         $crawler = null;
+        $plugin = null;
+
+        // get url from input
         $url = $this->option('u');
+
+        // check if we have some url
         if (is_null($url) || $url === '') {
             $this->error('No url provided');
             return;
         }
+
+        // check if url is url
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            $this->error('This url is bad...');
+            return;
+        }
+
+        // check if we support this url
+        if (!$this->validateUrl($url)) {
+            $this->error('This url is not supported');
+            return;
+        }
+
+        // initialize scrapping client
         $this->client = new Goutte();
+
+        if ($url === env('SCRAP_URL')) {
+            $plugin = new ComesConnectedScrapper();
+        }
+
         try {
             $crawler = $this->client->request('GET', $url);
         } catch (Exception $e) {
@@ -131,15 +164,6 @@ class ScrapCommand extends Command
     private function cleanCurrencies(string $symbol, string $text): string
     {
         return str_replace($symbol, '', $text);
-    }
-
-    /**
-     * @param array $result
-     * @return void
-     */
-    public function pushResult(array $result): void
-    {
-        $this->results[] = $result;
     }
 
     /**
