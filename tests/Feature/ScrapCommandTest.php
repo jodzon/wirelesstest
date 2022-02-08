@@ -17,10 +17,6 @@ test('crawler class check', function ($url) {
     [$badURL],
 );
 
-test('crawler class check', function ($url) {
-
-});
-
 
 test('scrap command called from command line with various urls', function () use ($properJsonResult) {
     $this->artisan('scrap')
