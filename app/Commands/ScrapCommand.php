@@ -12,24 +12,6 @@ class ScrapCommand extends Command
 {
 
     /**
-     * Scrapping results array
-     * @var array
-     */
-    private array $results = array();
-
-    /**
-     * Scrapping results elements
-     * @var array
-     */
-    private array $elements = array();
-
-    /**
-     * Scrapping results array
-     * @var object
-     */
-    private object $client;
-
-    /**
      * The signature of the command.
      *
      * @var string
@@ -42,49 +24,6 @@ class ScrapCommand extends Command
      * @var string
      */
     protected $description = 'Scraps target webpage, based on url in SCRAP_URL from .env';
-
-
-    /**
-     * @param Crawler $crawler
-     * @return void
-     */
-    private function prepareScrapData(Crawler $crawler): void
-    {
-        // get packages from content
-        $crawler->filter('.package')->each(function ($node) {
-            // get basic values
-            $optionTitle = $node->filter('.header.dark-bg > h3')->text();
-            $optionDescription = $node->filter('.package-name')->text();
-            $packagePriceBlock = $node->filter('.package-price');
-            $optionPrice = $packagePriceBlock->filter('.price-big')->text();
-            $optionPrice = $this->cleanCurrencies('£', $optionPrice);
-            // search for discount text, no discount applied if nothing found
-            $discount = $node->filter('.package-price')->each(function (Crawler $packagePrice) {
-                $discountText = $packagePrice->filter('p');
-                if ($discountText->count()) {
-                    return $discountText->text();
-                }
-                return 'No discount';
-            });
-            // check if any data is present
-            if (
-                !is_string($optionTitle)
-                || !is_string($optionDescription)
-                || !is_string($optionPrice)
-            ) {
-                $this->error('Error occured while parsing node');
-                return;
-            }
-            // push element array to $this->elements
-            $this->elements[] = [
-                'option_title' => $optionTitle,
-                'option_description' => $optionDescription,
-                'option_price' => $optionPrice,
-                'option_currency' => 'GBP',
-                'option_discount' => $discount,
-            ];
-        });
-    }
 
     /**
      * @param string $url
@@ -130,64 +69,33 @@ class ScrapCommand extends Command
         }
 
         // initialize scrapping client
-        $this->client = new Goutte();
+        $client = new Goutte();
 
+        // assign scrapping plugin to match url target
         if ($url === env('SCRAP_URL')) {
             $plugin = new ComesConnectedScrapper();
         }
-
+        // try to get and process data
         try {
-            $crawler = $this->client->request('GET', $url);
-        } catch (Exception $e) {
-            $this->error('Error occured: ' . $e->getMessage());
-        }
-        if ($crawler instanceof Crawler) {
-            $this->prepareScrapData($crawler);
-            if (count($this->elements) > 0) {
-                ksort($this->elements);
-                $this->setResults($this->elements);
-                $this->info($this->getJsonResults());
+            $crawler = $client->request('GET', $url);
+            if ($crawler instanceof Crawler) {
+                $plugin->processHtmlData($crawler);
+                if (count($plugin->getResults()) > 0) {
+                    // return scrapped json values
+                    $this->info($plugin->getJsonResults());
+                    return;
+                }
+                // return no results info
+                $this->info('No data gathered');
                 return;
             }
-            $this->error('No data gathered');
+        } catch (Exception $e) {
+            // display error
+            $this->error('Error occured: ' . $e->getMessage());
             return;
         }
+        // general error
         $this->error('General error');
-    }
-
-    /**
-     * Removes given currency symbol from given text
-     * @param string $symbol
-     * @param string $text
-     * @return string
-     */
-    private function cleanCurrencies(string $symbol, string $text): string
-    {
-        return str_replace($symbol, '', $text);
-    }
-
-    /**
-     * @param array $result
-     * @return void
-     */
-    public function setResults(array $result): void
-    {
-        $this->results = $result;
-    }
-
-    /**
-     * @return string
-     */
-    private function getJsonResults(): string
-    {
-        return json_encode($this->results);
-    }
-
-    /**
-     * @return array
-     */
-    public function getResults(): array
-    {
-        return $this->results;
+        die();
     }
 }
