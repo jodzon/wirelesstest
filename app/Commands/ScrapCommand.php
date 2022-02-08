@@ -31,7 +31,7 @@ class ScrapCommand extends Command
      */
     private function validateUrl( string $url): ?bool
     {
-        if ($url !== env('SCRAP_URL')) {
+        if ($url !== env('VIDEX_SCRAP_URL')) {
             return null;
         }
         return true;
@@ -72,7 +72,7 @@ class ScrapCommand extends Command
         $client = new Goutte();
 
         // assign scrapping plugin to match url target
-        if ($url === env('SCRAP_URL')) {
+        if ($url === env('VIDEX_SCRAP_URL')) {
             $plugin = new ComesConnectedScrapper();
         }
         // try to get and process data
