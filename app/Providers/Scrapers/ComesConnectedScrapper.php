@@ -14,12 +14,12 @@ class ComesConnectedScrapper implements ScrapperInterface
     private array $results;
 
     /**
-     * @param array $result
+     * @param array $results
      * @return void
      */
-    public function setResults(array $result): void
+    public function setResults(array $results): void
     {
-        $this->results = $result;
+        $this->results = $results;
     }
 
     /**
